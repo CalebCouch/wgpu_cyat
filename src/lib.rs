@@ -2,6 +2,8 @@ use wgpu::{PipelineCompilationOptions, RenderPipelineDescriptor, PipelineLayoutD
 
 use wgpu_dyn_buffer::{DynamicBufferDescriptor, DynamicBuffer};
 
+use ordered_float::OrderedFloat;
+
 pub use cyat;
 use cyat::{VertexBuffers, ShapeBuilder, Vertex};
 
@@ -42,9 +44,10 @@ impl Vertex for DefaultVertex {
     type Attributes = DefaultAttributes;
 
     fn construct(position: [f32; 2], attrs: Self::Attributes) -> DefaultVertex {
+        let c = |f: f32| OrderedFloat((f + 0.055) / 1.055).powf(2.4);
         DefaultVertex{
             position,
-            color: attrs.color,
+            color: [c(attrs.color[0]), c(attrs.color[1]), c(attrs.color[2])],
             z: attrs.z
         }
     }
